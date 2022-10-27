@@ -11,6 +11,7 @@
 
 import sys
 from math import sqrt, pi as PI
+import csv
 
 
 def combinations(l):
@@ -70,25 +71,35 @@ PAIRS = tuple(combinations(SYSTEM))
 
 
 def advance(dt, n, bodies=SYSTEM, pairs=PAIRS):
+    fieldnames = ['name of the body', 'position x', 'position y', 'position z']
+    with open('position.csv', 'w', encoding='UTF8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(fieldnames)
     for i in range(n):
-        for ([x1, y1, z1], v1, m1, [x2, y2, z2], v2, m2) in pairs:
-            dx = x1 - x2
-            dy = y1 - y2
-            dz = z1 - z2
-            dist = sqrt(dx * dx + dy * dy + dz * dz)
-            mag = dt / (dist * dist * dist)
-            b1m = m1 * mag
-            b2m = m2 * mag
-            v1[0] -= dx * b2m
-            v1[1] -= dy * b2m
-            v1[2] -= dz * b2m
-            v2[2] += dz * b1m
-            v2[1] += dy * b1m
-            v2[0] += dx * b1m
-        for (r, [vx, vy, vz], m) in bodies:
-            r[0] += dt * vx
-            r[1] += dt * vy
-            r[2] += dt * vz
+        for name,([x,y,z],a,b) in BODIES.items():
+            with open('position.csv', 'a', encoding='UTF8', newline='') as f:
+                writer = csv.writer(f)
+                data = '{k},{x},{y},{z}'.format(k=name, x=x, y=y, z=z)
+                print(data)
+                writer.writerow(data)
+                for ([x1, y1, z1], v1, m1, [x2, y2, z2], v2, m2) in pairs:
+                    dx = x1 - x2
+                    dy = y1 - y2
+                    dz = z1 - z2
+                    dist = sqrt(dx * dx + dy * dy + dz * dz)
+                    mag = dt / (dist * dist * dist)
+                    b1m = m1 * mag
+                    b2m = m2 * mag
+                    v1[0] -= dx * b2m
+                    v1[1] -= dy * b2m
+                    v1[2] -= dz * b2m
+                    v2[2] += dz * b1m
+                    v2[1] += dy * b1m
+                    v2[0] += dx * b1m
+                for (r, [vx, vy, vz], m) in bodies:
+                    r[0] += dt * vx
+                    r[1] += dt * vy
+                    r[2] += dt * vz
 
 
 def report_energy(bodies=SYSTEM, pairs=PAIRS, e=0.0):
@@ -112,12 +123,15 @@ def offset_momentum(ref, bodies=SYSTEM, px=0.0, py=0.0, pz=0.0):
     v[1] = py / m
     v[2] = pz / m
 
-
 def main(n, ref="sun"):
     offset_momentum(BODIES[ref])
     report_energy()
     advance(0.01, n)
-    report_energy()
+    #report_energy()
+    '''f = open("nbody_result.csv", "a")
+    f.writelines(BODIES.values())
+    f.close()'''
+    #f = open()
 
 
 if __name__ == "__main__":
