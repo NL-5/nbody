@@ -258,7 +258,7 @@ int main(int argc, char **argv) {
         offset_momentum(state);
         std::cout << energy(state) << std::endl;
         std::ofstream out_stream;
-        out_stream.open("nbody_cpp.csv", std::ios::app);
+        out_stream.open("pos.csv", std::ios::app);
         out_stream << "name" <<';'<<"position x"<<';'<<"position y"<<';'<<"position z"<<std::endl;
 
         for (int i = 0; i < n; ++i) {
